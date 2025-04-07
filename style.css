@@ -1,0 +1,113 @@
+/* Reset + base */
+body {
+    font-family: 'Comic Sans MS', sans-serif;
+    background: linear-gradient(135deg, #1a51aa, #425bb1);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.form-section {
+    width: 35%;
+    min-width: 300px;
+    padding: 30px;
+    background-color: #456997;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.records-section {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+h1 {
+    text-align: center;
+    color: #89b3c7;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+form label, .filter-section label {
+    font-size: 1rem;
+    color: #9cb0d4;
+    margin-bottom: 5px;
+    display: block;
+}
+
+form input, form select, form button, .filter-section input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #7893eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #37416f;
+}
+
+form button {
+    background-color: #264cf3;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #6f7cb4;
+}
+
+#records {
+    margin-top: 10px;
+}
+
+.record {
+    background-color: #f8f2e1;
+    border-radius: 12px;
+    border: 1px solid #385479;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.record p {
+    margin: 5px 0;
+    color: #0fa5d3;
+}
+
+.record strong {
+    color: #0062a3;
+}
+
+.delete-btn {
+    background-color: #7b94e8;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    background-color: #5f7fc4;
+}
+
+.filter-section {
+    margin-top: 20px;
+}
+
+#total {
+    color: #374d6f;
+    font-weight: bold;
+    margin-top: 10px;
+}

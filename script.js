@@ -1,4 +1,4 @@
-const apiUrl = "https://script.google.com/a/macros/stu.tcssh.tc.edu.tw/s/AKfycbyvOaWbj8bN8lo69e_sl9miFbdmjFvdYEyUfNG5jobN/dev";
+const apiUrl = "https://script.google.com/macros/s/AKfycbyYY_DjHL8SgLdBbuSNVS-F_Op66GbKq5MLSu2KBlyC71uCSRv88eKymDNRTBq4CMrBnw/exec";
 
 const form = document.getElementById("recordForm");
 const recordsContainer = document.getElementById("records");
@@ -11,8 +11,7 @@ async function loadRecords() {
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        allRecords = data.slice(1).map((record, i) => ({
-            id: i + 1,
+        allRecords = data.slice(1).map((record) => ({
             date: record[0],
             category: record[1],
             amount: Number(record[2]),
@@ -36,15 +35,18 @@ function renderRecords() {
 
     filtered.forEach(record => {
         total += record.amount;
+
         const recordElement = document.createElement("div");
         recordElement.classList.add("record");
+
         recordElement.innerHTML = `
             <p><strong>日期：</strong>${record.date}</p>
             <p><strong>類別：</strong>${record.category}</p>
             <p><strong>金額：</strong>${record.amount} 元</p>
             <p><strong>備註：</strong>${record.note}</p>
-            <button class="delete-btn" data-id="${record.id}">刪除</button>
+            <button class="delete-btn">刪除</button>
         `;
+
         recordsContainer.appendChild(recordElement);
     });
 
@@ -61,29 +63,57 @@ form.addEventListener("submit", async function (event) {
         note: document.getElementById("note").value
     };
 
-    await fetch(apiUrl, {
-        method: "POST",
-        body: JSON.stringify(newRecord),
-        headers: { "Content-Type": "application/json" },
-        mode: "no-cors"
-    });
+    if (!newRecord.date || !newRecord.category || newRecord.amount <= 0) {
+        alert("請確認資料填寫正確（金額需大於 0）");
+        return;
+    }
 
-    form.reset();
-    alert("記帳成功！（請到 Google Sheets 查看資料）");
-    setTimeout(loadRecords, 2000);
+    try {
+        await fetch(apiUrl, {
+            method: "POST",
+            body: JSON.stringify(newRecord),
+            headers: { "Content-Type": "application/json" },
+            mode: "no-cors"
+        });
+
+        form.reset();
+        alert("記帳成功！（請到 Google Sheets 查看資料）");
+        setTimeout(loadRecords, 2000);
+    } catch (error) {
+        console.error("新增紀錄失敗：", error);
+    }
 });
 
 recordsContainer.addEventListener("click", async function (e) {
     if (e.target.classList.contains("delete-btn")) {
-        const id = e.target.getAttribute("data-id");
+        const parent = e.target.closest(".record");
+
+        const date = parent.querySelector("p:nth-child(1)").textContent.replace("日期：", "").trim();
+        const category = parent.querySelector("p:nth-child(2)").textContent.replace("類別：", "").trim();
+        const amount = parent.querySelector("p:nth-child(3)").textContent.replace("金額：", "").replace("元", "").trim();
+        const note = parent.querySelector("p:nth-child(4)").textContent.replace("備註：", "").trim();
+
         if (confirm("確定要刪除這筆記錄嗎？")) {
-            await fetch(apiUrl, {
-                method: "POST",
-                body: JSON.stringify({ action: "delete", id }),
-                headers: { "Content-Type": "application/json" },
-                mode: "no-cors"
-            });
-            setTimeout(loadRecords, 2000);
+            const deleteData = {
+                action: "delete",
+                date,
+                category,
+                amount: Number(amount),
+                note
+            };
+
+            try {
+                await fetch(apiUrl, {
+                    method: "POST",
+                    body: JSON.stringify(deleteData),
+                    headers: { "Content-Type": "application/json" },
+                    mode: "no-cors"
+                });
+
+                setTimeout(loadRecords, 2000);
+            } catch (error) {
+                console.error("刪除失敗：", error);
+            }
         }
     }
 });
